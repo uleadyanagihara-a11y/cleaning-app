@@ -1,0 +1,6 @@
+*
+!.dockerignore
+!Dockerfile
+!php.ini
+!start-container
+!supervisord.conf
