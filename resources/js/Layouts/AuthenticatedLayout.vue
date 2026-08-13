@@ -9,6 +9,25 @@ import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
 const user = usePage().props.auth.user;
+
+const navigationLinks = [
+    {
+        label: 'メンバー',
+        routeName: 'members.index',
+        activePattern: 'members.*',
+    },
+    {
+        label: '掃除内容',
+        routeName: 'cleaning-items.index',
+        activePattern: 'cleaning-items.*',
+    },
+    { label: 'PDF出力', routeName: 'pdf.index', activePattern: 'pdf.*' },
+    {
+        label: 'アカウント一覧',
+        routeName: 'accounts.index',
+        activePattern: 'accounts.*',
+    },
+];
 </script>
 
 <template>
@@ -35,10 +54,12 @@ const user = usePage().props.auth.user;
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
                             >
                                 <NavLink
-                                    :href="route('dashboard')"
-                                    :active="route().current('dashboard')"
+                                    v-for="link in navigationLinks"
+                                    :key="link.routeName"
+                                    :href="route(link.routeName)"
+                                    :active="route().current(link.activePattern)"
                                 >
-                                    Dashboard
+                                    {{ link.label }}
                                 </NavLink>
                             </div>
                         </div>
@@ -142,10 +163,12 @@ const user = usePage().props.auth.user;
                 >
                     <div class="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
-                            :href="route('dashboard')"
-                            :active="route().current('dashboard')"
+                            v-for="link in navigationLinks"
+                            :key="link.routeName"
+                            :href="route(link.routeName)"
+                            :active="route().current(link.activePattern)"
                         >
-                            Dashboard
+                            {{ link.label }}
                         </ResponsiveNavLink>
                     </div>
 
