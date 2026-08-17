@@ -18,6 +18,24 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/members', function () {
+        return Inertia::render('Members/Index');
+    })->name('members.index');
+
+    Route::get('/cleaning-items', function () {
+        return Inertia::render('CleaningItems/Index');
+    })->name('cleaning-items.index');
+
+    Route::get('/pdf', function () {
+        return Inertia::render('Pdf/Index');
+    })->name('pdf.index');
+
+    Route::get('/accounts', function () {
+        return Inertia::render('Accounts/Index');
+    })->name('accounts.index');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
