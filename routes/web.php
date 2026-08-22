@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -13,9 +14,8 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/members', function () {
-        return Inertia::render('Members/Index');
-    })->name('members.index');
+    Route::get('/members', [MemberController::class, 'index'])
+        ->name('members.index');
 
     Route::get('/cleaning-items', function () {
         return Inertia::render('CleaningItems/Index');
