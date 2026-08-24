@@ -92,6 +92,20 @@ class MemberIndexTest extends TestCase
                 ->where('counts.inactive', 2));
     }
 
+    public function test_only_active_cleaning_roles_are_available_for_registration(): void
+    {
+        $user = User::factory()->create();
+        CleaningRole::create(['name' => '玄関', 'is_active' => true]);
+        CleaningRole::create(['name' => '廊下', 'is_active' => false]);
+
+        $this->actingAs($user)
+            ->get(route('members.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('cleaningRoles', 1)
+                ->where('cleaningRoles.0.name', '玄関'));
+    }
+
     public function test_member_list_is_paginated_twenty_members_at_a_time(): void
     {
         $user = User::factory()->create();

@@ -18,6 +18,9 @@ declare global {
 
 declare module '@inertiajs/core' {
     interface InertiaConfig {
+        flashDataType: {
+            success?: string;
+        };
         sharedPageProps: {
             auth: {
                 user: User | null;
