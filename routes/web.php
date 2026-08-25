@@ -18,6 +18,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('members.index');
     Route::post('/members', [MemberController::class, 'store'])
         ->name('members.store');
+    Route::patch('/members/{member}', [MemberController::class, 'update'])
+        ->name('members.update');
+    Route::delete('/members/{member}', [MemberController::class, 'destroy'])
+        ->name('members.destroy');
 
     Route::get('/cleaning-items', function () {
         return Inertia::render('CleaningItems/Index');

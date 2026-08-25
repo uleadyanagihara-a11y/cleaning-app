@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Modal from '@/Components/Modal.vue';
@@ -8,6 +9,21 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+
+/**
+ * @typedef {Object} CleaningRole
+ * @property {number} id
+ * @property {string} name
+ */
+
+/**
+ * @typedef {Object} Member
+ * @property {number} id
+ * @property {string} name
+ * @property {string|null} notes
+ * @property {boolean} is_active
+ * @property {CleaningRole[]} available_cleaning_roles
+ */
 
 const props = defineProps({
     members: {
@@ -34,8 +50,9 @@ const props = defineProps({
 const page = usePage();
 const search = ref(props.filters.search ?? '');
 const status = ref(props.filters.status ?? '');
-const showCreateModal = ref(false);
-const createForm = useForm(
+const showMemberModal = ref(false);
+const selectedMember = ref(/** @type {Member|null} */ (null));
+const memberForm = useForm(
     /** @type {{
      * name: string,
      * cleaning_role_ids: number[],
@@ -48,13 +65,17 @@ const createForm = useForm(
         is_active: true,
     }),
 );
+const showDeleteModal = ref(false);
+const memberBeingDeleted = ref(/** @type {Member|null} */ (null));
+const deleteForm = useForm({});
 
 const hasFilters = computed(
     () => search.value.trim() !== '' || status.value !== '',
 );
 const successMessage = computed(() => page.flash.success ?? '');
+const isEditing = computed(() => selectedMember.value !== null);
 const cleaningRoleError = computed(() => {
-    const error = Object.entries(createForm.errors).find(
+    const error = Object.entries(memberForm.errors).find(
         ([key]) =>
             key === 'cleaning_role_ids' ||
             key.startsWith('cleaning_role_ids.'),
@@ -64,28 +85,92 @@ const cleaningRoleError = computed(() => {
 });
 
 const openCreateModal = () => {
-    createForm.reset();
-    createForm.clearErrors();
-    showCreateModal.value = true;
+    selectedMember.value = null;
+    memberForm.reset();
+    memberForm.clearErrors();
+    showMemberModal.value = true;
 };
 
-const closeCreateModal = () => {
-    showCreateModal.value = false;
-    createForm.reset();
-    createForm.clearErrors();
+/**
+ * @param {Member} member
+ */
+const openEditModal = (member) => {
+    selectedMember.value = member;
+    memberForm.name = member.name;
+    memberForm.cleaning_role_ids = member.available_cleaning_roles.map(
+        (role) => role.id,
+    );
+    memberForm.notes = member.notes ?? '';
+    memberForm.is_active = member.is_active;
+    memberForm.clearErrors();
+    showMemberModal.value = true;
 };
 
-const requestCreateModalClose = () => {
-    if (!createForm.processing) {
-        closeCreateModal();
+const closeMemberModal = () => {
+    showMemberModal.value = false;
+    selectedMember.value = null;
+    memberForm.reset();
+    memberForm.clearErrors();
+};
+
+const requestMemberModalClose = () => {
+    if (!memberForm.processing) {
+        closeMemberModal();
     }
 };
 
-const submitCreateForm = () => {
-    createForm.post(route('members.store'), {
+const submitMemberForm = () => {
+    const options = {
         preserveScroll: true,
-        onSuccess: closeCreateModal,
-    });
+        onSuccess: closeMemberModal,
+    };
+
+    if (selectedMember.value) {
+        memberForm.patch(
+            route('members.update', selectedMember.value.id),
+            options,
+        );
+
+        return;
+    }
+
+    memberForm.post(route('members.store'), options);
+};
+
+/**
+ * @param {Member} member
+ */
+const openDeleteModal = (member) => {
+    memberBeingDeleted.value = member;
+    deleteForm.clearErrors();
+    showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    memberBeingDeleted.value = null;
+    deleteForm.reset();
+    deleteForm.clearErrors();
+};
+
+const requestDeleteModalClose = () => {
+    if (!deleteForm.processing) {
+        closeDeleteModal();
+    }
+};
+
+const deleteMember = () => {
+    if (!memberBeingDeleted.value) {
+        return;
+    }
+
+    deleteForm.delete(
+        route('members.destroy', memberBeingDeleted.value.id),
+        {
+            preserveScroll: true,
+            onSuccess: closeDeleteModal,
+        },
+    );
 };
 
 const applyFilters = () => {
@@ -159,7 +244,6 @@ const paginationLabel = (label) => {
                 >
                     {{ successMessage }}
                 </div>
-
                 <div class="grid grid-cols-3 gap-3 sm:gap-4">
                     <div class="rounded-lg bg-white p-4 shadow-sm">
                         <p class="text-xs font-medium text-gray-500 sm:text-sm">
@@ -286,6 +370,9 @@ const paginationLabel = (label) => {
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                                             状態
                                         </th>
+                                        <th scope="col" class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                            操作
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200 bg-white">
@@ -326,6 +413,24 @@ const paginationLabel = (label) => {
                                             >
                                                 {{ member.is_active ? '有効' : '無効' }}
                                             </span>
+                                        </td>
+                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                                            <button
+                                                type="button"
+                                                class="text-indigo-600 transition hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                                :aria-label="`${member.name}を編集`"
+                                                @click="openEditModal(member)"
+                                            >
+                                                編集
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="ml-4 text-red-600 transition hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                                :aria-label="`${member.name}を削除`"
+                                                @click="openDeleteModal(member)"
+                                            >
+                                                削除
+                                            </button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -381,6 +486,22 @@ const paginationLabel = (label) => {
                                         </dd>
                                     </div>
                                 </dl>
+                                <div class="mt-4 flex justify-end gap-4 border-t border-gray-200 pt-3 text-sm font-medium">
+                                    <button
+                                        type="button"
+                                        class="text-indigo-600 hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                        @click="openEditModal(member)"
+                                    >
+                                        編集
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="text-red-600 hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                        @click="openDeleteModal(member)"
+                                    >
+                                        削除
+                                    </button>
+                                </div>
                             </article>
                         </div>
 
@@ -425,22 +546,24 @@ const paginationLabel = (label) => {
         </div>
 
         <Modal
-            :show="showCreateModal"
-            :closeable="!createForm.processing"
+            :show="showMemberModal"
+            :closeable="!memberForm.processing"
             max-width="2xl"
-            aria-labelledby="create-member-title"
-            @close="requestCreateModalClose"
+            aria-labelledby="member-form-title"
+            @close="requestMemberModalClose"
         >
-            <form @submit.prevent="submitCreateForm">
+            <form @submit.prevent="submitMemberForm">
                 <div class="border-b border-gray-200 px-6 py-5">
                     <h2
-                        id="create-member-title"
+                        id="member-form-title"
                         class="text-lg font-semibold text-gray-900"
                     >
-                        メンバー登録
+                        {{ isEditing ? 'メンバー編集' : 'メンバー登録' }}
                     </h2>
                     <p class="mt-1 text-sm text-gray-500">
-                        メンバー情報と担当可能な掃除内容を入力してください。
+                        {{ isEditing
+                            ? '登録済みのメンバー情報を変更します。'
+                            : 'メンバー情報と担当可能な掃除内容を入力してください。' }}
                     </p>
                 </div>
 
@@ -452,7 +575,7 @@ const paginationLabel = (label) => {
                         </InputLabel>
                         <TextInput
                             id="member-name"
-                            v-model="createForm.name"
+                            v-model="memberForm.name"
                             type="text"
                             maxlength="100"
                             autocomplete="name"
@@ -462,7 +585,7 @@ const paginationLabel = (label) => {
                         />
                         <InputError
                             class="mt-2"
-                            :message="createForm.errors.name"
+                            :message="memberForm.errors.name"
                         />
                     </div>
 
@@ -481,7 +604,7 @@ const paginationLabel = (label) => {
                                 class="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
                             >
                                 <input
-                                    v-model="createForm.cleaning_role_ids"
+                                    v-model="memberForm.cleaning_role_ids"
                                     type="checkbox"
                                     :value="role.id"
                                     class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
@@ -508,16 +631,16 @@ const paginationLabel = (label) => {
                         </InputLabel>
                         <textarea
                             id="member-notes"
-                            v-model="createForm.notes"
+                            v-model="memberForm.notes"
                             rows="4"
                             maxlength="2000"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="勤務可能な曜日や時間帯など"
                         />
                         <div class="mt-1 flex items-start justify-between gap-3">
-                            <InputError :message="createForm.errors.notes" />
+                            <InputError :message="memberForm.errors.notes" />
                             <span class="ml-auto text-xs text-gray-500">
-                                {{ createForm.notes.length }}/2000
+                                {{ memberForm.notes.length }}/2000
                             </span>
                         </div>
                     </div>
@@ -529,7 +652,7 @@ const paginationLabel = (label) => {
                         <div class="mt-2 flex flex-wrap gap-5">
                             <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
                                 <input
-                                    v-model="createForm.is_active"
+                                    v-model="memberForm.is_active"
                                     type="radio"
                                     :value="true"
                                     class="border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
@@ -538,7 +661,7 @@ const paginationLabel = (label) => {
                             </label>
                             <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
                                 <input
-                                    v-model="createForm.is_active"
+                                    v-model="memberForm.is_active"
                                     type="radio"
                                     :value="false"
                                     class="border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
@@ -548,7 +671,7 @@ const paginationLabel = (label) => {
                         </div>
                         <InputError
                             class="mt-2"
-                            :message="createForm.errors.is_active"
+                            :message="memberForm.errors.is_active"
                         />
                     </fieldset>
                 </div>
@@ -556,18 +679,62 @@ const paginationLabel = (label) => {
                 <div class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
                     <SecondaryButton
                         type="button"
-                        :disabled="createForm.processing"
-                        @click="requestCreateModalClose"
+                        :disabled="memberForm.processing"
+                        @click="requestMemberModalClose"
                     >
                         キャンセル
                     </SecondaryButton>
                     <PrimaryButton
                         type="submit"
-                        :disabled="createForm.processing"
-                        :class="{ 'opacity-25': createForm.processing }"
+                        :disabled="memberForm.processing"
+                        :class="{ 'opacity-25': memberForm.processing }"
                     >
-                        {{ createForm.processing ? '登録中…' : '登録する' }}
+                        {{ memberForm.processing
+                            ? (isEditing ? '更新中…' : '登録中…')
+                            : (isEditing ? '更新する' : '登録する') }}
                     </PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+
+        <Modal
+            :show="showDeleteModal"
+            :closeable="!deleteForm.processing"
+            max-width="lg"
+            aria-labelledby="delete-member-title"
+            @close="requestDeleteModalClose"
+        >
+            <form @submit.prevent="deleteMember">
+                <div class="px-6 py-5">
+                    <h2
+                        id="delete-member-title"
+                        class="text-lg font-semibold text-gray-900"
+                    >
+                        メンバーを削除しますか？
+                    </h2>
+                    <p class="mt-3 text-sm leading-6 text-gray-600">
+                        <span class="font-semibold text-gray-900">
+                            {{ memberBeingDeleted?.name }}
+                        </span>
+                        を削除します。担当可能な掃除の設定と掃除当番の履歴もすべて削除され、この操作は元に戻せません。
+                    </p>
+                </div>
+
+                <div class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+                    <SecondaryButton
+                        type="button"
+                        :disabled="deleteForm.processing"
+                        @click="requestDeleteModalClose"
+                    >
+                        キャンセル
+                    </SecondaryButton>
+                    <DangerButton
+                        type="submit"
+                        :disabled="deleteForm.processing"
+                        :class="{ 'opacity-25': deleteForm.processing }"
+                    >
+                        {{ deleteForm.processing ? '削除中…' : '削除する' }}
+                    </DangerButton>
                 </div>
             </form>
         </Modal>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMemberRequest;
+use App\Http\Requests\UpdateMemberRequest;
 use App\Models\CleaningRole;
 use App\Models\Member;
 use Illuminate\Database\Eloquent\Builder;
@@ -90,6 +91,47 @@ class MemberController extends Controller
         });
 
         Inertia::flash('success', 'メンバーを登録しました。');
+
+        return to_route('members.index');
+    }
+
+    /**
+     * Update the specified member.
+     */
+    public function update(
+        UpdateMemberRequest $request,
+        Member $member,
+    ): RedirectResponse {
+        $validated = $request->validated();
+
+        DB::transaction(function () use ($member, $validated): void {
+            $member->update([
+                'name' => $validated['name'],
+                'notes' => $validated['notes'] ?? null,
+                'is_active' => $validated['is_active'],
+            ]);
+
+            $member->availableCleaningRoles()->sync(
+                $validated['cleaning_role_ids'] ?? [],
+            );
+        });
+
+        Inertia::flash('success', 'メンバー情報を更新しました。');
+
+        return to_route('members.index');
+    }
+
+    /**
+     * Remove the specified member.
+     */
+    public function destroy(Member $member): RedirectResponse
+    {
+        DB::transaction(function () use ($member): void {
+            $member->cleaningAssignments()->delete();
+            $member->delete();
+        });
+
+        Inertia::flash('success', 'メンバーを削除しました。');
 
         return to_route('members.index');
     }
