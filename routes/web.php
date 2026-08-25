@@ -16,6 +16,8 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/members', [MemberController::class, 'index'])
         ->name('members.index');
+    Route::post('/members', [MemberController::class, 'store'])
+        ->name('members.store');
 
     Route::get('/cleaning-items', function () {
         return Inertia::render('CleaningItems/Index');

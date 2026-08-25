@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMemberRequest;
+use App\Models\CleaningRole;
 use App\Models\Member;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -50,6 +54,10 @@ class MemberController extends Controller
 
         return Inertia::render('Members/Index', [
             'members' => $members,
+            'cleaningRoles' => CleaningRole::query()
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->get(['id', 'name']),
             'filters' => [
                 'search' => $search,
                 'status' => $status,
@@ -60,5 +68,29 @@ class MemberController extends Controller
                 'inactive' => Member::query()->where('is_active', false)->count(),
             ],
         ]);
+    }
+
+    /**
+     * Store a newly created member.
+     */
+    public function store(StoreMemberRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        DB::transaction(function () use ($validated): void {
+            $member = Member::query()->create([
+                'name' => $validated['name'],
+                'notes' => $validated['notes'] ?? null,
+                'is_active' => $validated['is_active'],
+            ]);
+
+            $member->availableCleaningRoles()->sync(
+                $validated['cleaning_role_ids'] ?? [],
+            );
+        });
+
+        Inertia::flash('success', 'メンバーを登録しました。');
+
+        return to_route('members.index');
     }
 }
