@@ -17,7 +17,7 @@ const navigationLinks = [
         activePattern: 'members.*',
     },
     {
-        label: '掃除内容',
+        label: '掃除役割',
         routeName: 'cleaning-items.index',
         activePattern: 'cleaning-items.*',
     },
