@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'description', 'is_active'])]
+#[Fillable(['name', 'description', 'required_member_count', 'is_active'])]
 class CleaningRole extends Model
 {
     /**
@@ -18,6 +18,7 @@ class CleaningRole extends Model
     protected function casts(): array
     {
         return [
+            'required_member_count' => 'integer',
             'is_active' => 'boolean',
         ];
     }
