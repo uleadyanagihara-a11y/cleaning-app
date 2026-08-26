@@ -26,6 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/cleaning-items', [CleaningRoleController::class, 'index'])
         ->name('cleaning-items.index');
+    Route::post('/cleaning-items', [CleaningRoleController::class, 'store'])
+        ->name('cleaning-items.store');
 
     Route::get('/pdf', function () {
         return Inertia::render('Pdf/Index');

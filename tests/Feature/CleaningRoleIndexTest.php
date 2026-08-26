@@ -33,6 +33,7 @@ class CleaningRoleIndexTest extends TestCase
         CleaningRole::create([
             'name' => 'トイレ',
             'description' => '便器、床、手洗い場の清掃',
+            'required_member_count' => 2,
             'is_active' => true,
         ]);
         CleaningRole::create([
@@ -52,9 +53,11 @@ class CleaningRoleIndexTest extends TestCase
                     'cleaningRoles.0.description',
                     '便器、床、手洗い場の清掃',
                 )
+                ->where('cleaningRoles.0.required_member_count', 2)
                 ->where('cleaningRoles.0.is_active', true)
                 ->where('cleaningRoles.1.name', '備品補充')
                 ->where('cleaningRoles.1.description', null)
+                ->where('cleaningRoles.1.required_member_count', 1)
                 ->where('cleaningRoles.1.is_active', false));
     }
 
