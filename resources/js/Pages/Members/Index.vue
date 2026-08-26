@@ -14,6 +14,7 @@ import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
  * @typedef {Object} CleaningRole
  * @property {number} id
  * @property {string} name
+ * @property {boolean} is_active
  */
 
 /**
@@ -34,6 +35,7 @@ const props = defineProps({
         type: /** @type {import('vue').PropType<Array<{
             id: number,
             name: string,
+            is_active: boolean,
         }>>} */ (Array),
         required: true,
     },
@@ -74,6 +76,19 @@ const hasFilters = computed(
 );
 const successMessage = computed(() => page.flash.success ?? '');
 const isEditing = computed(() => selectedMember.value !== null);
+const selectableCleaningRoles = computed(() => {
+    const roles = [...props.cleaningRoles];
+
+    for (const role of selectedMember.value?.available_cleaning_roles ?? []) {
+        if (!roles.some((candidate) => candidate.id === role.id)) {
+            roles.push(role);
+        }
+    }
+
+    return roles.sort((first, second) =>
+        first.name.localeCompare(second.name, 'ja'),
+    );
+});
 const cleaningRoleError = computed(() => {
     const error = Object.entries(memberForm.errors).find(
         ([key]) =>
@@ -595,11 +610,11 @@ const paginationLabel = (label) => {
                             <span class="font-normal text-gray-500">（任意）</span>
                         </legend>
                         <div
-                            v-if="cleaningRoles.length > 0"
+                            v-if="selectableCleaningRoles.length > 0"
                             class="mt-2 grid gap-2 rounded-md border border-gray-200 p-3 sm:grid-cols-2"
                         >
                             <label
-                                v-for="role in cleaningRoles"
+                                v-for="role in selectableCleaningRoles"
                                 :key="role.id"
                                 class="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
                             >
@@ -610,6 +625,12 @@ const paginationLabel = (label) => {
                                     class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                                 />
                                 <span>{{ role.name }}</span>
+                                <span
+                                    v-if="!role.is_active"
+                                    class="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600"
+                                >
+                                    無効
+                                </span>
                             </label>
                         </div>
                         <p

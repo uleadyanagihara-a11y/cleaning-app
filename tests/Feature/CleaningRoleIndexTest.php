@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\CleaningRole;
+use App\Models\Member;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -73,5 +74,27 @@ class CleaningRoleIndexTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('cleaningRoles.0.name', 'B 有効')
                 ->where('cleaningRoles.1.name', 'A 無効'));
+    }
+
+    public function test_role_list_includes_usage_counts_and_delete_availability(): void
+    {
+        $user = User::factory()->create();
+        $usedRole = CleaningRole::create(['name' => '使用中']);
+        CleaningRole::create(['name' => '未使用']);
+        $member = Member::create(['name' => '田中']);
+        $member->availableCleaningRoles()->attach($usedRole);
+
+        $this->actingAs($user)
+            ->get(route('cleaning-items.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('cleaningRoles.0.name', '使用中')
+                ->where('cleaningRoles.0.assignment_count', 0)
+                ->where('cleaningRoles.0.available_member_count', 1)
+                ->where('cleaningRoles.0.can_delete', false)
+                ->where('cleaningRoles.1.name', '未使用')
+                ->where('cleaningRoles.1.assignment_count', 0)
+                ->where('cleaningRoles.1.available_member_count', 0)
+                ->where('cleaningRoles.1.can_delete', true));
     }
 }
