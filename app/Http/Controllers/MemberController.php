@@ -49,6 +49,7 @@ class MemberController extends Controller
                     ->map(fn ($role) => [
                         'id' => $role->id,
                         'name' => $role->name,
+                        'is_active' => $role->is_active,
                     ])
                     ->values(),
             ]);
@@ -58,7 +59,7 @@ class MemberController extends Controller
             'cleaningRoles' => CleaningRole::query()
                 ->where('is_active', true)
                 ->orderBy('name')
-                ->get(['id', 'name']),
+                ->get(['id', 'name', 'is_active']),
             'filters' => [
                 'search' => $search,
                 'status' => $status,

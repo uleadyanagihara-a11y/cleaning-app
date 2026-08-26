@@ -96,6 +96,60 @@ class MemberUpdateDeleteTest extends TestCase
         ]);
     }
 
+    public function test_member_update_can_keep_or_remove_an_existing_inactive_role(): void
+    {
+        $user = User::factory()->create();
+        $inactiveRole = CleaningRole::create([
+            'name' => '無効な役割',
+            'is_active' => false,
+        ]);
+        $member = Member::create(['name' => '田中']);
+        $member->availableCleaningRoles()->attach($inactiveRole);
+
+        $this->actingAs($user)
+            ->patch(route('members.update', $member), [
+                ...$this->validPayload(),
+                'cleaning_role_ids' => [$inactiveRole->id],
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('cleaning_role_member', [
+            'member_id' => $member->id,
+            'cleaning_role_id' => $inactiveRole->id,
+        ]);
+
+        $this->actingAs($user)
+            ->patch(route('members.update', $member), $this->validPayload())
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseMissing('cleaning_role_member', [
+            'member_id' => $member->id,
+            'cleaning_role_id' => $inactiveRole->id,
+        ]);
+    }
+
+    public function test_member_update_cannot_add_an_unrelated_inactive_role(): void
+    {
+        $user = User::factory()->create();
+        $inactiveRole = CleaningRole::create([
+            'name' => '無効な役割',
+            'is_active' => false,
+        ]);
+        $member = Member::create(['name' => '田中']);
+
+        $this->actingAs($user)
+            ->patch(route('members.update', $member), [
+                ...$this->validPayload(),
+                'cleaning_role_ids' => [$inactiveRole->id],
+            ])
+            ->assertSessionHasErrors('cleaning_role_ids.0');
+
+        $this->assertDatabaseMissing('cleaning_role_member', [
+            'member_id' => $member->id,
+            'cleaning_role_id' => $inactiveRole->id,
+        ]);
+    }
+
     public function test_verified_users_can_delete_a_member_and_its_role_links(): void
     {
         $user = User::factory()->create();

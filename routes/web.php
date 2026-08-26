@@ -28,6 +28,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('cleaning-items.index');
     Route::post('/cleaning-items', [CleaningRoleController::class, 'store'])
         ->name('cleaning-items.store');
+    Route::patch('/cleaning-items/{cleaningRole}', [CleaningRoleController::class, 'update'])
+        ->name('cleaning-items.update');
+    Route::delete('/cleaning-items/{cleaningRole}', [CleaningRoleController::class, 'destroy'])
+        ->name('cleaning-items.destroy');
 
     Route::get('/pdf', function () {
         return Inertia::render('Pdf/Index');
