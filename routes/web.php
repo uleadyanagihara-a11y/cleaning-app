@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CleaningAssignmentController;
 use App\Http\Controllers\CleaningRoleController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
@@ -32,6 +33,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('cleaning-items.update');
     Route::delete('/cleaning-items/{cleaningRole}', [CleaningRoleController::class, 'destroy'])
         ->name('cleaning-items.destroy');
+
+    Route::get('/cleaning-assignments', [CleaningAssignmentController::class, 'index'])
+        ->name('cleaning-assignments.index');
+    Route::post('/cleaning-assignments/preview', [CleaningAssignmentController::class, 'preview'])
+        ->name('cleaning-assignments.preview');
+    Route::post('/cleaning-assignments', [CleaningAssignmentController::class, 'store'])
+        ->name('cleaning-assignments.store');
 
     Route::get('/pdf', function () {
         return Inertia::render('Pdf/Index');
