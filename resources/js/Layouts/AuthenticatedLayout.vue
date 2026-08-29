@@ -21,6 +21,11 @@ const navigationLinks = [
         routeName: 'cleaning-items.index',
         activePattern: 'cleaning-items.*',
     },
+    {
+        label: '掃除当番',
+        routeName: 'cleaning-assignments.index',
+        activePattern: 'cleaning-assignments.*',
+    },
     { label: 'PDF出力', routeName: 'pdf.index', activePattern: 'pdf.*' },
     {
         label: 'アカウント一覧',

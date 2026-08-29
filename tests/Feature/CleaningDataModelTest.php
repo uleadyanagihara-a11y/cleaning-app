@@ -111,6 +111,21 @@ class CleaningDataModelTest extends TestCase
         ]);
     }
 
+    public function test_same_member_cannot_be_registered_for_multiple_roles_on_the_same_date(): void
+    {
+        $assignment = $this->createAssignment();
+        $otherRole = CleaningRole::create(['name' => 'トイレ']);
+
+        $this->expectException(QueryException::class);
+
+        CleaningAssignment::create([
+            'member_id' => $assignment->member_id,
+            'cleaning_role_id' => $otherRole->id,
+            'assignment_date' => $assignment->assignment_date,
+            'created_by' => $assignment->created_by,
+        ]);
+    }
+
     private function createAssignment(): CleaningAssignment
     {
         $user = User::factory()->create();
