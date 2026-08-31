@@ -3,6 +3,7 @@
 use App\Http\Controllers\CleaningAssignmentController;
 use App\Http\Controllers\CleaningRoleController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -41,9 +42,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/cleaning-assignments', [CleaningAssignmentController::class, 'store'])
         ->name('cleaning-assignments.store');
 
-    Route::get('/pdf', function () {
-        return Inertia::render('Pdf/Index');
-    })->name('pdf.index');
+    Route::get('/pdf', [PdfController::class, 'index'])
+        ->name('pdf.index');
+    Route::get('/pdf/cleaning-assignments/preview', [PdfController::class, 'preview'])
+        ->name('pdf.preview');
+    Route::get('/pdf/cleaning-assignments/download', [PdfController::class, 'download'])
+        ->name('pdf.download');
 
     Route::get('/accounts', function () {
         return Inertia::render('Accounts/Index');
