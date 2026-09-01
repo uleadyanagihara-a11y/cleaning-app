@@ -123,7 +123,7 @@ Sailランタイムは`docker/sail/8.5`でプロジェクト管理していま�
 | ランタイム | バージョン |
 | --- | --- |
 | Ubuntu | `24.04`（ダイジェスト固定） |
-| PHP | `8.5.9` |
+| PHP | `8.5.10` |
 | Node.js | `24.19.0` |
 | Composer | `2.10.2` |
 | npm | `12.0.2` |
@@ -137,7 +137,7 @@ Sailランタイムは`docker/sail/8.5`でプロジェクト管理していま�
 
 | サービス | イメージ |
 | --- | --- |
-| Laravel Sail（ローカルビルド） | `cleaning-app/sail:php8.5.9-node24.19.0` |
+| Laravel Sail（ローカルビルド） | `cleaning-app/sail:php8.5.10-node24.19.0` |
 | MySQL | `mysql:8.4.11` |
 | Redis | `redis:8.10-alpine` |
 | Meilisearch | `getmeili/meilisearch:v1.52.0` |
