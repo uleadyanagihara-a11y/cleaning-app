@@ -79,6 +79,17 @@ id -g
 
 MySQLのコンテナ間接続には`.env`の`DB_HOST=mysql`、`DB_PORT=3306`を使用します。ホスト側の接続ポートは`FORWARD_DB_PORT=3307`です。
 
+## PDF出力
+
+掃除当番表のPDF生成には`barryvdh/laravel-dompdf`を使用します。日本語表示用のIPAexゴシックはSailイメージへ組み込まれ、Dompdfが生成するフォントキャッシュは`storage/fonts`へ保存されます。
+
+PDF対応前に作成したSailイメージを使用している場合は、イメージを再ビルドしてから起動してください。
+
+```bash
+./vendor/bin/sail build --no-cache
+./vendor/bin/sail up -d --wait
+```
+
 ## よく使うコマンド
 
 ```bash
