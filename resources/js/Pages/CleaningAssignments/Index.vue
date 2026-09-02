@@ -12,11 +12,15 @@ const props = defineProps({
         required: true,
     },
     existingAssignments: {
-        type: /** @type {import('vue').PropType<Array<AssignmentRole>>} */ (Array),
+        type: /** @type {import('vue').PropType<Array<AssignmentRole>>} */ (
+            Array
+        ),
         required: true,
     },
     activeMembers: {
-        type: /** @type {import('vue').PropType<Array<{id: number, name: string}>>} */ (Array),
+        type: /** @type {import('vue').PropType<Array<{id: number, name: string}>>} */ (
+            Array
+        ),
         required: true,
     },
     hasActiveRoles: {
@@ -178,7 +182,7 @@ const formatDate = (value) => {
     <AuthenticatedLayout>
         <template #header>
             <div>
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                <h2 class="text-xl leading-tight font-semibold text-gray-800">
                     掃除当番
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">
@@ -197,7 +201,9 @@ const formatDate = (value) => {
                     {{ successMessage }}
                 </div>
 
-                <section class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <section
+                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                >
                     <div class="space-y-5 p-6">
                         <div>
                             <h3 class="text-base font-semibold text-gray-900">
@@ -208,7 +214,9 @@ const formatDate = (value) => {
                             </p>
                         </div>
 
-                        <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+                        <div
+                            class="flex flex-col gap-3 sm:flex-row sm:items-end"
+                        >
                             <label class="block w-full sm:max-w-xs">
                                 <span class="text-sm font-medium text-gray-700">
                                     日付
@@ -222,7 +230,7 @@ const formatDate = (value) => {
                             </label>
                             <button
                                 type="button"
-                                class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                 :disabled="!date || isDisplayedDate"
                                 @click="showSelectedDate"
                             >
@@ -244,16 +252,24 @@ const formatDate = (value) => {
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
                     <div class="border-b border-gray-200 px-6 py-5">
-                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div
+                            class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+                        >
                             <div>
-                                <h3 class="text-base font-semibold text-gray-900">
+                                <h3
+                                    class="text-base font-semibold text-gray-900"
+                                >
                                     {{ formatDate(selectedDate) }}の確定済み当番
                                 </h3>
                                 <p class="mt-1 text-sm text-gray-500">
-                                    {{ existingAssignedCount }}名 / 必要{{ existingRequiredCount }}名
+                                    {{ existingAssignedCount }}名 / 必要{{
+                                        existingRequiredCount
+                                    }}名
                                 </p>
                             </div>
-                            <span class="inline-flex w-fit rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+                            <span
+                                class="inline-flex w-fit rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800"
+                            >
                                 確定済み
                             </span>
                         </div>
@@ -293,12 +309,18 @@ const formatDate = (value) => {
                 </section>
 
                 <template v-else>
-                    <section class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <section
+                        class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                    >
                         <div class="space-y-5 p-6">
                             <div>
-                                <h3 class="text-base font-semibold text-gray-900">
+                                <h3
+                                    class="text-base font-semibold text-gray-900"
+                                >
                                     当日除外するメンバー
-                                    <span class="font-normal text-gray-500">（任意）</span>
+                                    <span class="font-normal text-gray-500"
+                                        >（任意）</span
+                                    >
                                 </h3>
                                 <p class="mt-1 text-sm text-gray-500">
                                     休暇や欠席など、この日の当番候補から外すメンバーを選択します。
@@ -320,7 +342,9 @@ const formatDate = (value) => {
                                         :value="member.id"
                                         class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                                     />
-                                    <span class="text-sm font-medium text-gray-800">
+                                    <span
+                                        class="text-sm font-medium text-gray-800"
+                                    >
                                         {{ member.name }}
                                     </span>
                                 </label>
@@ -329,16 +353,25 @@ const formatDate = (value) => {
                                 有効なメンバーが登録されていません。
                             </p>
 
-                            <div class="flex flex-col gap-3 border-t border-gray-200 pt-5 sm:flex-row sm:items-center">
+                            <div
+                                class="flex flex-col gap-3 border-t border-gray-200 pt-5 sm:flex-row sm:items-center"
+                            >
                                 <button
                                     type="button"
-                                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                     :disabled="!canPreview"
                                     @click="generatePreview"
                                 >
-                                    {{ previewLoading ? '選択中...' : '自動選択' }}
+                                    {{
+                                        previewLoading
+                                            ? '選択中...'
+                                            : '自動選択'
+                                    }}
                                 </button>
-                                <p v-if="!hasActiveRoles" class="text-sm text-amber-700">
+                                <p
+                                    v-if="!hasActiveRoles"
+                                    class="text-sm text-amber-700"
+                                >
                                     有効な掃除役割が登録されていません。
                                 </p>
                             </div>
@@ -358,13 +391,20 @@ const formatDate = (value) => {
                         class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
                     >
                         <div class="border-b border-gray-200 px-6 py-5">
-                            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <div
+                                class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+                            >
                                 <div>
-                                    <h3 class="text-base font-semibold text-gray-900">
+                                    <h3
+                                        class="text-base font-semibold text-gray-900"
+                                    >
                                         自動選択結果
                                     </h3>
                                     <p class="mt-1 text-sm text-gray-500">
-                                        {{ preview.assigned_member_count }}名 / 必要{{ preview.required_member_count }}名
+                                        {{ preview.assigned_member_count }}名 /
+                                        必要{{
+                                            preview.required_member_count
+                                        }}名
                                     </p>
                                 </div>
                                 <span
@@ -420,20 +460,33 @@ const formatDate = (value) => {
                             </div>
                         </div>
 
-                        <div class="space-y-3 border-t border-gray-200 bg-gray-50 px-6 py-5">
+                        <div
+                            class="space-y-3 border-t border-gray-200 bg-gray-50 px-6 py-5"
+                        >
                             <p
                                 v-if="preview.shortage_count > 0"
                                 class="text-sm text-amber-800"
                             >
                                 担当可能者が足りない役割があります。不足を含む現在の結果で確定できます。
                             </p>
-                            <InputError :message="confirmForm.errors.assignments" />
-                            <InputError :message="confirmForm.errors.assignment_date" />
+                            <InputError
+                                :message="confirmForm.errors.assignments"
+                            />
+                            <InputError
+                                :message="confirmForm.errors.assignment_date"
+                            />
                             <PrimaryButton
-                                :disabled="confirmForm.processing || preview.assigned_member_count === 0"
+                                :disabled="
+                                    confirmForm.processing ||
+                                    preview.assigned_member_count === 0
+                                "
                                 @click="confirmAssignments"
                             >
-                                {{ confirmForm.processing ? '確定中...' : 'この内容で確定' }}
+                                {{
+                                    confirmForm.processing
+                                        ? '確定中...'
+                                        : 'この内容で確定'
+                                }}
                             </PrimaryButton>
                         </div>
                     </section>

@@ -30,3 +30,6 @@ Thumbs.db
 # Personal notes
 /git_command.md
 /memo.md
+
+# Claude Code (personal/local only; keep shared config like /.claude/settings.json tracked)
+/.claude/settings.local.json

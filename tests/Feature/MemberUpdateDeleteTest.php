@@ -13,7 +13,7 @@ class MemberUpdateDeleteTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guests_and_unverified_users_cannot_update_or_delete_members(): void
+    public function test_guests_cannot_update_or_delete_members(): void
     {
         $member = Member::create(['name' => '変更前']);
 
@@ -22,22 +22,29 @@ class MemberUpdateDeleteTest extends TestCase
         $this->delete(route('members.destroy', $member))
             ->assertRedirect(route('login'));
 
-        $unverifiedUser = User::factory()->unverified()->create();
-
-        $this->actingAs($unverifiedUser)
-            ->patch(route('members.update', $member), $this->validPayload())
-            ->assertRedirect(route('verification.notice'));
-        $this->actingAs($unverifiedUser)
-            ->delete(route('members.destroy', $member))
-            ->assertRedirect(route('verification.notice'));
-
         $this->assertDatabaseHas('members', [
             'id' => $member->id,
             'name' => '変更前',
         ]);
     }
 
-    public function test_verified_users_can_update_a_member_and_cleaning_roles(): void
+    public function test_users_can_update_and_delete_members_without_a_verified_email(): void
+    {
+        $member = Member::create(['name' => '変更前']);
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)
+            ->patch(route('members.update', $member), $this->validPayload())
+            ->assertRedirect(route('members.index'));
+
+        $this->actingAs($user)
+            ->delete(route('members.destroy', $member))
+            ->assertRedirect(route('members.index'));
+
+        $this->assertDatabaseMissing('members', ['id' => $member->id]);
+    }
+
+    public function test_authenticated_users_can_update_a_member_and_cleaning_roles(): void
     {
         $user = User::factory()->create();
         $oldRole = CleaningRole::create(['name' => '玄関']);
@@ -150,7 +157,7 @@ class MemberUpdateDeleteTest extends TestCase
         ]);
     }
 
-    public function test_verified_users_can_delete_a_member_and_its_role_links(): void
+    public function test_authenticated_users_can_delete_a_member_and_its_role_links(): void
     {
         $user = User::factory()->create();
         $role = CleaningRole::create(['name' => '玄関']);

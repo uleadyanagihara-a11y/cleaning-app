@@ -13,7 +13,7 @@ class CleaningRoleUpdateDeleteTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guests_and_unverified_users_cannot_update_or_delete_cleaning_roles(): void
+    public function test_guests_cannot_update_or_delete_cleaning_roles(): void
     {
         $role = CleaningRole::create(['name' => '変更前']);
 
@@ -22,22 +22,29 @@ class CleaningRoleUpdateDeleteTest extends TestCase
         $this->delete(route('cleaning-items.destroy', $role))
             ->assertRedirect(route('login'));
 
-        $unverifiedUser = User::factory()->unverified()->create();
-
-        $this->actingAs($unverifiedUser)
-            ->patch(route('cleaning-items.update', $role), $this->validPayload())
-            ->assertRedirect(route('verification.notice'));
-        $this->actingAs($unverifiedUser)
-            ->delete(route('cleaning-items.destroy', $role))
-            ->assertRedirect(route('verification.notice'));
-
         $this->assertDatabaseHas('cleaning_roles', [
             'id' => $role->id,
             'name' => '変更前',
         ]);
     }
 
-    public function test_verified_users_can_update_a_cleaning_role(): void
+    public function test_users_can_update_and_delete_cleaning_roles_without_a_verified_email(): void
+    {
+        $role = CleaningRole::create(['name' => '変更前']);
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)
+            ->patch(route('cleaning-items.update', $role), $this->validPayload())
+            ->assertRedirect(route('cleaning-items.index'));
+
+        $this->actingAs($user)
+            ->delete(route('cleaning-items.destroy', $role))
+            ->assertRedirect(route('cleaning-items.index'));
+
+        $this->assertDatabaseMissing('cleaning_roles', ['id' => $role->id]);
+    }
+
+    public function test_authenticated_users_can_update_a_cleaning_role(): void
     {
         $user = User::factory()->create();
         $role = CleaningRole::create([
@@ -88,7 +95,7 @@ class CleaningRoleUpdateDeleteTest extends TestCase
             ->assertSessionHasErrors('name');
     }
 
-    public function test_verified_users_can_delete_an_unused_cleaning_role(): void
+    public function test_authenticated_users_can_delete_an_unused_cleaning_role(): void
     {
         $user = User::factory()->create();
         $role = CleaningRole::create(['name' => '未使用']);

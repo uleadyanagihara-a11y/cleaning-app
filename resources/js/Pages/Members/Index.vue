@@ -92,8 +92,7 @@ const selectableCleaningRoles = computed(() => {
 const cleaningRoleError = computed(() => {
     const error = Object.entries(memberForm.errors).find(
         ([key]) =>
-            key === 'cleaning_role_ids' ||
-            key.startsWith('cleaning_role_ids.'),
+            key === 'cleaning_role_ids' || key.startsWith('cleaning_role_ids.'),
     );
 
     return error?.[1];
@@ -179,13 +178,10 @@ const deleteMember = () => {
         return;
     }
 
-    deleteForm.delete(
-        route('members.destroy', memberBeingDeleted.value.id),
-        {
-            preserveScroll: true,
-            onSuccess: closeDeleteModal,
-        },
-    );
+    deleteForm.delete(route('members.destroy', memberBeingDeleted.value.id), {
+        preserveScroll: true,
+        onSuccess: closeDeleteModal,
+    });
 };
 
 const applyFilters = () => {
@@ -231,9 +227,13 @@ const paginationLabel = (label) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <div>
-                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                    <h2
+                        class="text-xl leading-tight font-semibold text-gray-800"
+                    >
                         メンバー一覧
                     </h2>
                     <p class="mt-1 text-sm text-gray-500">
@@ -242,7 +242,7 @@ const paginationLabel = (label) => {
                 </div>
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                     @click="openCreateModal"
                 >
                     メンバー登録
@@ -266,7 +266,9 @@ const paginationLabel = (label) => {
                         </p>
                         <p class="mt-1 text-2xl font-semibold text-gray-900">
                             {{ counts.all }}
-                            <span class="text-sm font-normal text-gray-500">名</span>
+                            <span class="text-sm font-normal text-gray-500"
+                                >名</span
+                            >
                         </p>
                     </div>
                     <div class="rounded-lg bg-white p-4 shadow-sm">
@@ -275,7 +277,9 @@ const paginationLabel = (label) => {
                         </p>
                         <p class="mt-1 text-2xl font-semibold text-emerald-700">
                             {{ counts.active }}
-                            <span class="text-sm font-normal text-gray-500">名</span>
+                            <span class="text-sm font-normal text-gray-500"
+                                >名</span
+                            >
                         </p>
                     </div>
                     <div class="rounded-lg bg-white p-4 shadow-sm">
@@ -284,7 +288,9 @@ const paginationLabel = (label) => {
                         </p>
                         <p class="mt-1 text-2xl font-semibold text-gray-600">
                             {{ counts.inactive }}
-                            <span class="text-sm font-normal text-gray-500">名</span>
+                            <span class="text-sm font-normal text-gray-500"
+                                >名</span
+                            >
                         </p>
                     </div>
                 </div>
@@ -294,7 +300,9 @@ const paginationLabel = (label) => {
                         class="border-b border-gray-200 p-4 sm:p-6"
                         @submit.prevent="applyFilters"
                     >
-                        <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_14rem_auto] sm:items-end">
+                        <div
+                            class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_14rem_auto] sm:items-end"
+                        >
                             <div>
                                 <label
                                     for="member-search"
@@ -333,14 +341,14 @@ const paginationLabel = (label) => {
                             <div class="flex gap-2">
                                 <button
                                     type="submit"
-                                    class="inline-flex flex-1 items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:flex-none"
+                                    class="inline-flex flex-1 items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none sm:flex-none"
                                 >
                                     検索
                                 </button>
                                 <button
                                     v-if="hasFilters"
                                     type="button"
-                                    class="inline-flex flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:flex-none"
+                                    class="inline-flex flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none sm:flex-none"
                                     @click="resetFilters"
                                 >
                                     クリア
@@ -354,9 +362,11 @@ const paginationLabel = (label) => {
                         class="px-6 py-16 text-center"
                     >
                         <p class="text-base font-medium text-gray-700">
-                            {{ hasFilters
-                                ? '条件に一致するメンバーはいません。'
-                                : '登録済みのメンバーはいません。' }}
+                            {{
+                                hasFilters
+                                    ? '条件に一致するメンバーはいません。'
+                                    : '登録済みのメンバーはいません。'
+                            }}
                         </p>
                         <button
                             v-if="hasFilters"
@@ -373,35 +383,61 @@ const paginationLabel = (label) => {
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            class="px-6 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase"
+                                        >
                                             メンバー名
                                         </th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            class="px-6 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase"
+                                        >
                                             担当可能な掃除
                                         </th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            class="px-6 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase"
+                                        >
                                             備考
                                         </th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            class="px-6 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase"
+                                        >
                                             状態
                                         </th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            class="px-6 py-3 text-right text-xs font-semibold tracking-wider text-gray-500 uppercase"
+                                        >
                                             操作
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
+                                <tbody
+                                    class="divide-y divide-gray-200 bg-white"
+                                >
                                     <tr
                                         v-for="member in members.data"
                                         :key="member.id"
-                                        :class="{ 'bg-gray-50/70': !member.is_active }"
+                                        :class="{
+                                            'bg-gray-50/70': !member.is_active,
+                                        }"
                                     >
-                                        <th scope="row" class="whitespace-nowrap px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                                        <th
+                                            scope="row"
+                                            class="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap text-gray-900"
+                                        >
                                             {{ member.name }}
                                         </th>
                                         <td class="max-w-md px-6 py-4">
                                             <div
-                                                v-if="member.available_cleaning_roles.length > 0"
+                                                v-if="
+                                                    member
+                                                        .available_cleaning_roles
+                                                        .length > 0
+                                                "
                                                 class="flex flex-wrap gap-1.5"
                                             >
                                                 <span
@@ -412,27 +448,40 @@ const paginationLabel = (label) => {
                                                     {{ role.name }}
                                                 </span>
                                             </div>
-                                            <span v-else class="text-sm text-gray-400">
+                                            <span
+                                                v-else
+                                                class="text-sm text-gray-400"
+                                            >
                                                 未設定
                                             </span>
                                         </td>
-                                        <td class="max-w-sm whitespace-pre-line wrap-break-word px-6 py-4 text-sm text-gray-600">
+                                        <td
+                                            class="max-w-sm px-6 py-4 text-sm wrap-break-word whitespace-pre-line text-gray-600"
+                                        >
                                             {{ member.notes || '—' }}
                                         </td>
-                                        <td class="whitespace-nowrap px-6 py-4">
+                                        <td class="px-6 py-4 whitespace-nowrap">
                                             <span
                                                 class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
-                                                :class="member.is_active
-                                                    ? 'bg-emerald-100 text-emerald-800'
-                                                    : 'bg-gray-200 text-gray-700'"
+                                                :class="
+                                                    member.is_active
+                                                        ? 'bg-emerald-100 text-emerald-800'
+                                                        : 'bg-gray-200 text-gray-700'
+                                                "
                                             >
-                                                {{ member.is_active ? '有効' : '無効' }}
+                                                {{
+                                                    member.is_active
+                                                        ? '有効'
+                                                        : '無効'
+                                                }}
                                             </span>
                                         </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                                        <td
+                                            class="px-6 py-4 text-right text-sm font-medium whitespace-nowrap"
+                                        >
                                             <button
                                                 type="button"
-                                                class="text-indigo-600 transition hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                                class="text-indigo-600 transition hover:text-indigo-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                                                 :aria-label="`${member.name}を編集`"
                                                 @click="openEditModal(member)"
                                             >
@@ -440,7 +489,7 @@ const paginationLabel = (label) => {
                                             </button>
                                             <button
                                                 type="button"
-                                                class="ml-4 text-red-600 transition hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                                class="ml-4 text-red-600 transition hover:text-red-900 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
                                                 :aria-label="`${member.name}を削除`"
                                                 @click="openDeleteModal(member)"
                                             >
@@ -459,15 +508,19 @@ const paginationLabel = (label) => {
                                 class="p-4"
                                 :class="{ 'bg-gray-50': !member.is_active }"
                             >
-                                <div class="flex items-start justify-between gap-3">
+                                <div
+                                    class="flex items-start justify-between gap-3"
+                                >
                                     <h3 class="font-semibold text-gray-900">
                                         {{ member.name }}
                                     </h3>
                                     <span
                                         class="inline-flex shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold"
-                                        :class="member.is_active
-                                            ? 'bg-emerald-100 text-emerald-800'
-                                            : 'bg-gray-200 text-gray-700'"
+                                        :class="
+                                            member.is_active
+                                                ? 'bg-emerald-100 text-emerald-800'
+                                                : 'bg-gray-200 text-gray-700'
+                                        "
                                     >
                                         {{ member.is_active ? '有効' : '無効' }}
                                     </span>
@@ -480,7 +533,11 @@ const paginationLabel = (label) => {
                                         </dt>
                                         <dd class="mt-1">
                                             <div
-                                                v-if="member.available_cleaning_roles.length > 0"
+                                                v-if="
+                                                    member
+                                                        .available_cleaning_roles
+                                                        .length > 0
+                                                "
                                                 class="flex flex-wrap gap-1.5"
                                             >
                                                 <span
@@ -491,27 +548,35 @@ const paginationLabel = (label) => {
                                                     {{ role.name }}
                                                 </span>
                                             </div>
-                                            <span v-else class="text-gray-400">未設定</span>
+                                            <span v-else class="text-gray-400"
+                                                >未設定</span
+                                            >
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt class="font-medium text-gray-500">備考</dt>
-                                        <dd class="mt-1 whitespace-pre-line wrap-break-word text-gray-700">
+                                        <dt class="font-medium text-gray-500">
+                                            備考
+                                        </dt>
+                                        <dd
+                                            class="mt-1 wrap-break-word whitespace-pre-line text-gray-700"
+                                        >
                                             {{ member.notes || '—' }}
                                         </dd>
                                     </div>
                                 </dl>
-                                <div class="mt-4 flex justify-end gap-4 border-t border-gray-200 pt-3 text-sm font-medium">
+                                <div
+                                    class="mt-4 flex justify-end gap-4 border-t border-gray-200 pt-3 text-sm font-medium"
+                                >
                                     <button
                                         type="button"
-                                        class="text-indigo-600 hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                        class="text-indigo-600 hover:text-indigo-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                                         @click="openEditModal(member)"
                                     >
                                         編集
                                     </button>
                                     <button
                                         type="button"
-                                        class="text-red-600 hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                        class="text-red-600 hover:text-red-900 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
                                         @click="openDeleteModal(member)"
                                     >
                                         削除
@@ -520,10 +585,13 @@ const paginationLabel = (label) => {
                             </article>
                         </div>
 
-                        <div class="flex flex-col gap-4 border-t border-gray-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                        <div
+                            class="flex flex-col gap-4 border-t border-gray-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                        >
                             <p class="text-sm text-gray-600">
-                                全{{ members.total }}件中
-                                {{ members.from }}〜{{ members.to }}件を表示
+                                全{{ members.total }}件中 {{ members.from }}〜{{
+                                    members.to
+                                }}件を表示
                             </p>
                             <nav
                                 v-if="members.last_page > 1"
@@ -538,10 +606,14 @@ const paginationLabel = (label) => {
                                         v-if="link.url"
                                         :href="link.url"
                                         class="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md border px-3 py-2 text-sm font-medium transition"
-                                        :class="link.active
-                                            ? 'border-indigo-600 bg-indigo-600 text-white'
-                                            : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'"
-                                        :aria-current="link.active ? 'page' : undefined"
+                                        :class="
+                                            link.active
+                                                ? 'border-indigo-600 bg-indigo-600 text-white'
+                                                : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                                        "
+                                        :aria-current="
+                                            link.active ? 'page' : undefined
+                                        "
                                         preserve-scroll
                                     >
                                         {{ paginationLabel(link.label) }}
@@ -576,9 +648,11 @@ const paginationLabel = (label) => {
                         {{ isEditing ? 'メンバー編集' : 'メンバー登録' }}
                     </h2>
                     <p class="mt-1 text-sm text-gray-500">
-                        {{ isEditing
-                            ? '登録済みのメンバー情報を変更します。'
-                            : 'メンバー情報と担当可能な掃除内容を入力してください。' }}
+                        {{
+                            isEditing
+                                ? '登録済みのメンバー情報を変更します。'
+                                : 'メンバー情報と担当可能な掃除内容を入力してください。'
+                        }}
                     </p>
                 </div>
 
@@ -607,7 +681,9 @@ const paginationLabel = (label) => {
                     <fieldset>
                         <legend class="text-sm font-medium text-gray-700">
                             担当可能な掃除
-                            <span class="font-normal text-gray-500">（任意）</span>
+                            <span class="font-normal text-gray-500"
+                                >（任意）</span
+                            >
                         </legend>
                         <div
                             v-if="selectableCleaningRoles.length > 0"
@@ -639,16 +715,15 @@ const paginationLabel = (label) => {
                         >
                             選択できる掃除内容がありません。
                         </p>
-                        <InputError
-                            class="mt-2"
-                            :message="cleaningRoleError"
-                        />
+                        <InputError class="mt-2" :message="cleaningRoleError" />
                     </fieldset>
 
                     <div>
                         <InputLabel for="member-notes">
                             備考
-                            <span class="font-normal text-gray-500">（任意）</span>
+                            <span class="font-normal text-gray-500"
+                                >（任意）</span
+                            >
                         </InputLabel>
                         <textarea
                             id="member-notes"
@@ -658,7 +733,9 @@ const paginationLabel = (label) => {
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="勤務可能な曜日や時間帯など"
                         />
-                        <div class="mt-1 flex items-start justify-between gap-3">
+                        <div
+                            class="mt-1 flex items-start justify-between gap-3"
+                        >
                             <InputError :message="memberForm.errors.notes" />
                             <span class="ml-auto text-xs text-gray-500">
                                 {{ memberForm.notes.length }}/2000
@@ -671,7 +748,9 @@ const paginationLabel = (label) => {
                             状態 <span class="text-red-600">*</span>
                         </legend>
                         <div class="mt-2 flex flex-wrap gap-5">
-                            <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+                            <label
+                                class="flex cursor-pointer items-center gap-2 text-sm text-gray-700"
+                            >
                                 <input
                                     v-model="memberForm.is_active"
                                     type="radio"
@@ -680,7 +759,9 @@ const paginationLabel = (label) => {
                                 />
                                 有効
                             </label>
-                            <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+                            <label
+                                class="flex cursor-pointer items-center gap-2 text-sm text-gray-700"
+                            >
                                 <input
                                     v-model="memberForm.is_active"
                                     type="radio"
@@ -697,7 +778,9 @@ const paginationLabel = (label) => {
                     </fieldset>
                 </div>
 
-                <div class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+                <div
+                    class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4"
+                >
                     <SecondaryButton
                         type="button"
                         :disabled="memberForm.processing"
@@ -710,9 +793,15 @@ const paginationLabel = (label) => {
                         :disabled="memberForm.processing"
                         :class="{ 'opacity-25': memberForm.processing }"
                     >
-                        {{ memberForm.processing
-                            ? (isEditing ? '更新中…' : '登録中…')
-                            : (isEditing ? '更新する' : '登録する') }}
+                        {{
+                            memberForm.processing
+                                ? isEditing
+                                    ? '更新中…'
+                                    : '登録中…'
+                                : isEditing
+                                  ? '更新する'
+                                  : '登録する'
+                        }}
                     </PrimaryButton>
                 </div>
             </form>
@@ -741,7 +830,9 @@ const paginationLabel = (label) => {
                     </p>
                 </div>
 
-                <div class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+                <div
+                    class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4"
+                >
                     <SecondaryButton
                         type="button"
                         :disabled="deleteForm.processing"

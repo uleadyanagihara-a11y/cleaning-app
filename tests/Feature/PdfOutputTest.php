@@ -25,19 +25,16 @@ class PdfOutputTest extends TestCase
             ->assertRedirect(route('login'));
     }
 
-    public function test_unverified_users_cannot_access_pdf_endpoints(): void
+    public function test_users_can_access_pdf_output_page_without_a_verified_email(): void
     {
         $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)
             ->get(route('pdf.index'))
-            ->assertRedirect(route('verification.notice'));
-        $this->actingAs($user)
-            ->get(route('pdf.preview', ['date' => '2026-08-27']))
-            ->assertRedirect(route('verification.notice'));
+            ->assertOk();
     }
 
-    public function test_verified_users_can_view_pdf_output_status(): void
+    public function test_authenticated_users_can_view_pdf_output_status(): void
     {
         $user = User::factory()->create();
         $this->createAssignment('2026-08-27', $user);
@@ -111,7 +108,7 @@ class PdfOutputTest extends TestCase
             ->assertSessionHasErrors('date');
     }
 
-    public function test_verified_users_can_preview_a_pdf(): void
+    public function test_authenticated_users_can_preview_a_pdf(): void
     {
         $user = User::factory()->create();
         $this->createAssignment('2026-08-27', $user);
@@ -126,7 +123,7 @@ class PdfOutputTest extends TestCase
         $this->assertStringStartsWith('%PDF-', $response->getContent());
     }
 
-    public function test_verified_users_can_download_a_pdf(): void
+    public function test_authenticated_users_can_download_a_pdf(): void
     {
         $user = User::factory()->create();
         $this->createAssignment('2026-08-27', $user);

@@ -26,7 +26,7 @@ class CleaningAssignmentManagementTest extends TestCase
             ->assertRedirect(route('login'));
     }
 
-    public function test_verified_users_can_view_active_members_and_existing_assignments(): void
+    public function test_authenticated_users_can_view_active_members_and_existing_assignments(): void
     {
         $user = User::factory()->create();
         $role = CleaningRole::create([
@@ -80,7 +80,7 @@ class CleaningAssignmentManagementTest extends TestCase
             ->assertJsonPath('roles.0.assignments.0.name', '田中');
     }
 
-    public function test_verified_users_can_confirm_the_current_preview(): void
+    public function test_authenticated_users_can_confirm_the_current_preview(): void
     {
         $user = User::factory()->create();
         $role = CleaningRole::create(['name' => '玄関']);
