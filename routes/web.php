@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CleaningAssignmentController;
 use App\Http\Controllers\CleaningRoleController;
 use App\Http\Controllers\MemberController;
@@ -49,9 +50,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pdf/cleaning-assignments/download', [PdfController::class, 'download'])
         ->name('pdf.download');
 
-    Route::get('/accounts', function () {
-        return Inertia::render('Accounts/Index');
-    })->name('accounts.index');
+    Route::get('/accounts', [AccountController::class, 'index'])
+        ->name('accounts.index');
 });
 
 Route::middleware('auth')->group(function () {

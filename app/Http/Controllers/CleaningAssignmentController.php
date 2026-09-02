@@ -21,7 +21,7 @@ class CleaningAssignmentController extends Controller
 {
     public function index(Request $request): Response
     {
-        //validation date
+        // validation date
         $validated = Validator::make(
             ['date' => $request->query('date', now()->toDateString())],
             ['date' => ['required', 'date_format:Y-m-d']],
@@ -31,7 +31,7 @@ class CleaningAssignmentController extends Controller
             ],
         )->validate();
 
-        //掃除当番の特定の日をメンバーとそのID、掃除当番ID,名前、必要人数取得
+        // 掃除当番の特定の日をメンバーとそのID、掃除当番ID,名前、必要人数取得
         $assignments = CleaningAssignment::query()
             ->where('assignment_date', $validated['date'])
             ->with(['member:id,name', 'cleaningRole:id,name,required_member_count'])
@@ -39,7 +39,7 @@ class CleaningAssignmentController extends Controller
             ->orderBy('member_id')
             ->get();
 
-        //割当済掃除当番がなければ空のコレクション、あれば有効な掃除当番または割当られている掃除当番ID
+        // 割当済掃除当番がなければ空のコレクション、あれば有効な掃除当番または割当られている掃除当番ID
         $existingAssignmentRoles = $assignments->isEmpty()
             ? collect()
             : CleaningRole::query()
