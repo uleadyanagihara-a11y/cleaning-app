@@ -52,6 +52,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/accounts', [AccountController::class, 'index'])
         ->name('accounts.index');
+    Route::post('/accounts', [AccountController::class, 'store'])
+        ->name('accounts.store');
 });
 
 Route::middleware('auth')->group(function () {
