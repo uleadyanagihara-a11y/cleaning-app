@@ -1,7 +1,13 @@
 <script setup>
 import { computed, ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import Modal from '@/Components/Modal.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     accounts: { type: Object, required: true },
@@ -9,8 +15,50 @@ const props = defineProps({
     counts: { type: Object, required: true },
 });
 
+const page = usePage();
 const search = ref(props.filters.search ?? '');
 const hasFilters = computed(() => search.value.trim() !== '');
+const successMessage = computed(() => page.flash.success ?? '');
+
+const showAccountModal = ref(false);
+const accountForm = useForm(
+    /** @type {{
+     * name: string,
+     * email: string,
+     * password: string,
+     * password_confirmation: string,
+     * }} */ ({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+    }),
+);
+
+const openCreateModal = () => {
+    accountForm.reset();
+    accountForm.clearErrors();
+    showAccountModal.value = true;
+};
+
+const closeAccountModal = () => {
+    showAccountModal.value = false;
+    accountForm.reset();
+    accountForm.clearErrors();
+};
+
+const requestAccountModalClose = () => {
+    if (!accountForm.processing) {
+        closeAccountModal();
+    }
+};
+
+const submitAccountForm = () => {
+    accountForm.post(route('accounts.store'), {
+        preserveScroll: true,
+        onSuccess: closeAccountModal,
+    });
+};
 
 const applyFilters = () => {
     router.get(
@@ -69,18 +117,38 @@ const paginationLabel = (label) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div>
-                <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                    アカウント一覧
-                </h2>
-                <p class="mt-1 text-sm text-gray-500">
-                    システムを利用できるアカウントを確認できます。
-                </p>
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+                <div>
+                    <h2
+                        class="text-xl leading-tight font-semibold text-gray-800"
+                    >
+                        アカウント一覧
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-500">
+                        システムを利用できるアカウントを確認できます。
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
+                    @click="openCreateModal"
+                >
+                    アカウント登録
+                </button>
             </div>
         </template>
 
         <div class="py-8 sm:py-12">
             <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+                <div
+                    v-if="successMessage"
+                    role="status"
+                    class="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
+                >
+                    {{ successMessage }}
+                </div>
                 <div class="grid gap-3 sm:gap-4">
                     <div class="rounded-lg bg-white p-4 shadow-sm">
                         <p class="text-xs font-medium text-gray-500 sm:text-sm">
@@ -321,5 +389,130 @@ const paginationLabel = (label) => {
                 </div>
             </div>
         </div>
+
+        <Modal
+            :show="showAccountModal"
+            :closeable="!accountForm.processing"
+            max-width="lg"
+            aria-labelledby="account-form-title"
+            @close="requestAccountModalClose"
+        >
+            <form @submit.prevent="submitAccountForm">
+                <div class="border-b border-gray-200 px-6 py-5">
+                    <h2
+                        id="account-form-title"
+                        class="text-lg font-semibold text-gray-900"
+                    >
+                        アカウント登録
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-500">
+                        システムにログインできる新しいアカウントを作成します。
+                    </p>
+                </div>
+
+                <div class="space-y-6 px-6 py-5">
+                    <div>
+                        <InputLabel for="account-name">
+                            名前
+                            <span class="text-red-600">*</span>
+                        </InputLabel>
+                        <TextInput
+                            id="account-name"
+                            v-model="accountForm.name"
+                            type="text"
+                            maxlength="255"
+                            autocomplete="name"
+                            required
+                            autofocus
+                            class="mt-1 block w-full"
+                        />
+                        <InputError
+                            class="mt-2"
+                            :message="accountForm.errors.name"
+                        />
+                    </div>
+
+                    <div>
+                        <InputLabel for="account-email">
+                            メールアドレス
+                            <span class="text-red-600">*</span>
+                        </InputLabel>
+                        <TextInput
+                            id="account-email"
+                            v-model="accountForm.email"
+                            type="email"
+                            maxlength="255"
+                            autocomplete="username"
+                            required
+                            class="mt-1 block w-full"
+                        />
+                        <InputError
+                            class="mt-2"
+                            :message="accountForm.errors.email"
+                        />
+                    </div>
+
+                    <div>
+                        <InputLabel for="account-password">
+                            パスワード
+                            <span class="text-red-600">*</span>
+                        </InputLabel>
+                        <TextInput
+                            id="account-password"
+                            v-model="accountForm.password"
+                            type="password"
+                            autocomplete="new-password"
+                            required
+                            class="mt-1 block w-full"
+                        />
+                        <p class="mt-1 text-xs text-gray-500">
+                            8文字以上で入力してください。
+                        </p>
+                        <InputError
+                            class="mt-2"
+                            :message="accountForm.errors.password"
+                        />
+                    </div>
+
+                    <div>
+                        <InputLabel for="account-password-confirmation">
+                            パスワード（確認用）
+                            <span class="text-red-600">*</span>
+                        </InputLabel>
+                        <TextInput
+                            id="account-password-confirmation"
+                            v-model="accountForm.password_confirmation"
+                            type="password"
+                            autocomplete="new-password"
+                            required
+                            class="mt-1 block w-full"
+                        />
+                        <InputError
+                            class="mt-2"
+                            :message="accountForm.errors.password_confirmation"
+                        />
+                    </div>
+                </div>
+
+                <div
+                    class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4"
+                >
+                    <SecondaryButton
+                        type="button"
+                        :disabled="accountForm.processing"
+                        @click="requestAccountModalClose"
+                    >
+                        キャンセル
+                    </SecondaryButton>
+                    <PrimaryButton
+                        type="submit"
+                        :disabled="accountForm.processing"
+                        :class="{ 'opacity-25': accountForm.processing }"
+                    >
+                        {{ accountForm.processing ? '登録中…' : '登録する' }}
+                    </PrimaryButton>
+                </div>
+            </form>
+        </Modal>
     </AuthenticatedLayout>
 </template>

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAccountRequest;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -46,5 +49,23 @@ class AccountController extends Controller
                 'all' => User::query()->count(),
             ],
         ]);
+    }
+
+    /**
+     * Store a newly created account.
+     */
+    public function store(StoreAccountRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        User::query()->create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        Inertia::flash('success', 'アカウントを登録しました。');
+
+        return to_route('accounts.index');
     }
 }
