@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import prettier from 'eslint-config-prettier/flat';
 import pluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
 
@@ -30,4 +31,5 @@ export default [
             globals: globals.node,
         },
     },
+    prettier,
 ];

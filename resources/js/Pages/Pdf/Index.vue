@@ -17,9 +17,7 @@ const props = defineProps({
 const date = ref(props.selectedDate);
 const isDisplayedDate = computed(() => date.value === props.selectedDate);
 const hasAssignments = computed(() => props.assignmentCount > 0);
-const canOutput = computed(
-    () => isDisplayedDate.value && hasAssignments.value,
-);
+const canOutput = computed(() => isDisplayedDate.value && hasAssignments.value);
 const previewUrl = computed(() =>
     route('pdf.preview', { date: props.selectedDate }),
 );
@@ -59,7 +57,7 @@ const formatDate = (value) => {
     <AuthenticatedLayout>
         <template #header>
             <div>
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                <h2 class="text-xl leading-tight font-semibold text-gray-800">
                     PDF出力
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">
@@ -70,7 +68,9 @@ const formatDate = (value) => {
 
         <div class="py-8 sm:py-12">
             <div class="mx-auto max-w-4xl space-y-6 px-4 sm:px-6 lg:px-8">
-                <section class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <section
+                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                >
                     <div class="space-y-5 p-6">
                         <div>
                             <h3 class="text-base font-semibold text-gray-900">
@@ -81,7 +81,9 @@ const formatDate = (value) => {
                             </p>
                         </div>
 
-                        <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+                        <div
+                            class="flex flex-col gap-3 sm:flex-row sm:items-end"
+                        >
                             <label class="block w-full sm:max-w-xs">
                                 <span class="text-sm font-medium text-gray-700">
                                     日付
@@ -95,7 +97,7 @@ const formatDate = (value) => {
                             </label>
                             <button
                                 type="button"
-                                class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                 :disabled="!date || isDisplayedDate"
                                 @click="showSelectedDate"
                             >
@@ -112,7 +114,9 @@ const formatDate = (value) => {
                     </div>
                 </section>
 
-                <section class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <section
+                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                >
                     <div class="space-y-5 p-6">
                         <div>
                             <h3 class="text-base font-semibold text-gray-900">
@@ -143,9 +147,10 @@ const formatDate = (value) => {
                                 :href="canOutput ? previewUrl : undefined"
                                 target="_blank"
                                 rel="noopener"
-                                class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                                 :class="{
-                                    'pointer-events-none opacity-50': !canOutput,
+                                    'pointer-events-none opacity-50':
+                                        !canOutput,
                                 }"
                                 :aria-disabled="!canOutput"
                             >
@@ -153,9 +158,10 @@ const formatDate = (value) => {
                             </a>
                             <a
                                 :href="canOutput ? downloadUrl : undefined"
-                                class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                                 :class="{
-                                    'pointer-events-none opacity-50': !canOutput,
+                                    'pointer-events-none opacity-50':
+                                        !canOutput,
                                 }"
                                 :aria-disabled="!canOutput"
                             >

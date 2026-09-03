@@ -19,16 +19,16 @@ class CleaningRoleIndexTest extends TestCase
             ->assertRedirect(route('login'));
     }
 
-    public function test_unverified_users_cannot_view_the_cleaning_role_list(): void
+    public function test_users_can_view_the_cleaning_role_list_without_a_verified_email(): void
     {
         $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)
             ->get(route('cleaning-items.index'))
-            ->assertRedirect(route('verification.notice'));
+            ->assertOk();
     }
 
-    public function test_verified_users_can_view_cleaning_roles_with_descriptions_and_status(): void
+    public function test_authenticated_users_can_view_cleaning_roles_with_descriptions_and_status(): void
     {
         $user = User::factory()->create();
         CleaningRole::create([

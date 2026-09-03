@@ -20,18 +20,18 @@ class MemberStoreTest extends TestCase
         $this->assertDatabaseCount('members', 0);
     }
 
-    public function test_unverified_users_cannot_store_members(): void
+    public function test_users_can_store_members_without_a_verified_email(): void
     {
         $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)
             ->post(route('members.store'), $this->validPayload())
-            ->assertRedirect(route('verification.notice'));
+            ->assertRedirect(route('members.index'));
 
-        $this->assertDatabaseCount('members', 0);
+        $this->assertDatabaseCount('members', 1);
     }
 
-    public function test_verified_users_can_store_a_member_with_cleaning_roles(): void
+    public function test_authenticated_users_can_store_a_member_with_cleaning_roles(): void
     {
         $user = User::factory()->create();
         $entrance = CleaningRole::create(['name' => '玄関']);

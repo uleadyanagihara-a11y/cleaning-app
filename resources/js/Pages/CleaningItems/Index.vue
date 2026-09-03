@@ -130,9 +130,13 @@ const deleteRole = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <div>
-                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                    <h2
+                        class="text-xl leading-tight font-semibold text-gray-800"
+                    >
                         掃除役割一覧
                     </h2>
                     <p class="mt-1 text-sm text-gray-500">
@@ -141,7 +145,7 @@ const deleteRole = () => {
                 </div>
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                     @click="openRoleModal"
                 >
                     役割登録
@@ -182,41 +186,45 @@ const deleteRole = () => {
                                     <tr>
                                         <th
                                             scope="col"
-                                            class="w-1/4 px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+                                            class="w-1/4 px-6 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase"
                                         >
                                             役割名
                                         </th>
                                         <th
                                             scope="col"
-                                            class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+                                            class="px-6 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase"
                                         >
                                             説明
                                         </th>
                                         <th
                                             scope="col"
-                                            class="w-36 px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+                                            class="w-36 px-6 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase"
                                         >
                                             必要人数
                                         </th>
                                         <th
                                             scope="col"
-                                            class="w-28 px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+                                            class="w-28 px-6 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase"
                                         >
                                             状態
                                         </th>
                                         <th
                                             scope="col"
-                                            class="w-32 px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500"
+                                            class="w-32 px-6 py-3 text-right text-xs font-semibold tracking-wider text-gray-500 uppercase"
                                         >
                                             操作
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
+                                <tbody
+                                    class="divide-y divide-gray-200 bg-white"
+                                >
                                     <tr
                                         v-for="role in cleaningRoles"
                                         :key="role.id"
-                                        :class="{ 'bg-gray-50/70': !role.is_active }"
+                                        :class="{
+                                            'bg-gray-50/70': !role.is_active,
+                                        }"
                                     >
                                         <th
                                             scope="row"
@@ -225,30 +233,44 @@ const deleteRole = () => {
                                             {{ role.name }}
                                         </th>
                                         <td
-                                            class="whitespace-pre-line wrap-break-word px-6 py-4 text-sm"
-                                            :class="role.description
-                                                ? 'text-gray-600'
-                                                : 'text-gray-400'"
+                                            class="px-6 py-4 text-sm wrap-break-word whitespace-pre-line"
+                                            :class="
+                                                role.description
+                                                    ? 'text-gray-600'
+                                                    : 'text-gray-400'
+                                            "
                                         >
-                                            {{ role.description || '説明未設定' }}
+                                            {{
+                                                role.description || '説明未設定'
+                                            }}
                                         </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-700">
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-700"
+                                        >
                                             {{ role.required_member_count }}名
                                         </td>
-                                        <td class="whitespace-nowrap px-6 py-4">
+                                        <td class="px-6 py-4 whitespace-nowrap">
                                             <span
                                                 class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
-                                                :class="role.is_active
-                                                    ? 'bg-emerald-100 text-emerald-800'
-                                                    : 'bg-gray-200 text-gray-700'"
+                                                :class="
+                                                    role.is_active
+                                                        ? 'bg-emerald-100 text-emerald-800'
+                                                        : 'bg-gray-200 text-gray-700'
+                                                "
                                             >
-                                                {{ role.is_active ? '有効' : '無効' }}
+                                                {{
+                                                    role.is_active
+                                                        ? '有効'
+                                                        : '無効'
+                                                }}
                                             </span>
                                         </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                                        <td
+                                            class="px-6 py-4 text-right text-sm font-medium whitespace-nowrap"
+                                        >
                                             <button
                                                 type="button"
-                                                class="text-indigo-600 transition hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                                class="text-indigo-600 transition hover:text-indigo-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                                                 :aria-label="`${role.name}を編集`"
                                                 @click="openEditModal(role)"
                                             >
@@ -256,7 +278,7 @@ const deleteRole = () => {
                                             </button>
                                             <button
                                                 type="button"
-                                                class="ml-4 text-red-600 transition hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                                class="ml-4 text-red-600 transition hover:text-red-900 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
                                                 :aria-label="`${role.name}を削除`"
                                                 @click="openDeleteModal(role)"
                                             >
@@ -275,15 +297,19 @@ const deleteRole = () => {
                                 class="p-4"
                                 :class="{ 'bg-gray-50': !role.is_active }"
                             >
-                                <div class="flex items-start justify-between gap-3">
+                                <div
+                                    class="flex items-start justify-between gap-3"
+                                >
                                     <h3 class="font-semibold text-gray-900">
                                         {{ role.name }}
                                     </h3>
                                     <span
                                         class="inline-flex shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold"
-                                        :class="role.is_active
-                                            ? 'bg-emerald-100 text-emerald-800'
-                                            : 'bg-gray-200 text-gray-700'"
+                                        :class="
+                                            role.is_active
+                                                ? 'bg-emerald-100 text-emerald-800'
+                                                : 'bg-gray-200 text-gray-700'
+                                        "
                                     >
                                         {{ role.is_active ? '有効' : '無効' }}
                                     </span>
@@ -302,26 +328,32 @@ const deleteRole = () => {
                                             説明
                                         </dt>
                                         <dd
-                                            class="mt-1 whitespace-pre-line wrap-break-word"
-                                            :class="role.description
-                                                ? 'text-gray-600'
-                                                : 'text-gray-400'"
+                                            class="mt-1 wrap-break-word whitespace-pre-line"
+                                            :class="
+                                                role.description
+                                                    ? 'text-gray-600'
+                                                    : 'text-gray-400'
+                                            "
                                         >
-                                            {{ role.description || '説明未設定' }}
+                                            {{
+                                                role.description || '説明未設定'
+                                            }}
                                         </dd>
                                     </div>
                                 </dl>
-                                <div class="mt-4 flex justify-end gap-4 border-t border-gray-200 pt-3 text-sm font-medium">
+                                <div
+                                    class="mt-4 flex justify-end gap-4 border-t border-gray-200 pt-3 text-sm font-medium"
+                                >
                                     <button
                                         type="button"
-                                        class="text-indigo-600 hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                        class="text-indigo-600 hover:text-indigo-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                                         @click="openEditModal(role)"
                                     >
                                         編集
                                     </button>
                                     <button
                                         type="button"
-                                        class="text-red-600 hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                        class="text-red-600 hover:text-red-900 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
                                         @click="openDeleteModal(role)"
                                     >
                                         削除
@@ -350,9 +382,11 @@ const deleteRole = () => {
                         {{ isEditing ? '役割編集' : '役割登録' }}
                     </h2>
                     <p class="mt-1 text-sm text-gray-500">
-                        {{ isEditing
-                            ? '登録済みの役割情報を変更します。'
-                            : '掃除の役割と、その役割に必要な人数を入力してください。' }}
+                        {{
+                            isEditing
+                                ? '登録済みの役割情報を変更します。'
+                                : '掃除の役割と、その役割に必要な人数を入力してください。'
+                        }}
                     </p>
                 </div>
 
@@ -361,7 +395,9 @@ const deleteRole = () => {
                         v-if="isEditing && selectedRole?.assignment_count > 0"
                         class="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800"
                     >
-                        この役割には清掃割当が{{ selectedRole.assignment_count }}件あります。役割名や説明の変更は過去の割当表示にも反映されます。別の作業として管理する場合は、この役割を無効にして新しい役割を登録してください。
+                        この役割には清掃割当が{{
+                            selectedRole.assignment_count
+                        }}件あります。役割名や説明の変更は過去の割当表示にも反映されます。別の作業として管理する場合は、この役割を無効にして新しい役割を登録してください。
                     </div>
                     <div>
                         <InputLabel for="role-name">
@@ -386,7 +422,9 @@ const deleteRole = () => {
                     <div>
                         <InputLabel for="role-description">
                             説明
-                            <span class="font-normal text-gray-500">（任意）</span>
+                            <span class="font-normal text-gray-500"
+                                >（任意）</span
+                            >
                         </InputLabel>
                         <textarea
                             id="role-description"
@@ -396,8 +434,12 @@ const deleteRole = () => {
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="担当する場所や作業内容など"
                         />
-                        <div class="mt-1 flex items-start justify-between gap-3">
-                            <InputError :message="roleForm.errors.description" />
+                        <div
+                            class="mt-1 flex items-start justify-between gap-3"
+                        >
+                            <InputError
+                                :message="roleForm.errors.description"
+                            />
                             <span class="ml-auto text-xs text-gray-500">
                                 {{ roleForm.description.length }}/2000
                             </span>
@@ -436,7 +478,9 @@ const deleteRole = () => {
                             状態 <span class="text-red-600">*</span>
                         </legend>
                         <div class="mt-2 flex flex-wrap gap-5">
-                            <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+                            <label
+                                class="flex cursor-pointer items-center gap-2 text-sm text-gray-700"
+                            >
                                 <input
                                     v-model="roleForm.is_active"
                                     type="radio"
@@ -445,7 +489,9 @@ const deleteRole = () => {
                                 />
                                 有効
                             </label>
-                            <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+                            <label
+                                class="flex cursor-pointer items-center gap-2 text-sm text-gray-700"
+                            >
                                 <input
                                     v-model="roleForm.is_active"
                                     type="radio"
@@ -465,7 +511,9 @@ const deleteRole = () => {
                     </fieldset>
                 </div>
 
-                <div class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+                <div
+                    class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4"
+                >
                     <SecondaryButton
                         type="button"
                         :disabled="roleForm.processing"
@@ -478,9 +526,15 @@ const deleteRole = () => {
                         :disabled="roleForm.processing"
                         :class="{ 'opacity-25': roleForm.processing }"
                     >
-                        {{ roleForm.processing
-                            ? (isEditing ? '更新中…' : '登録中…')
-                            : (isEditing ? '更新する' : '登録する') }}
+                        {{
+                            roleForm.processing
+                                ? isEditing
+                                    ? '更新中…'
+                                    : '登録中…'
+                                : isEditing
+                                  ? '更新する'
+                                  : '登録する'
+                        }}
                     </PrimaryButton>
                 </div>
             </form>
@@ -499,9 +553,11 @@ const deleteRole = () => {
                         id="delete-role-title"
                         class="text-lg font-semibold text-gray-900"
                     >
-                        {{ roleBeingDeleted?.can_delete
-                            ? '役割を削除しますか？'
-                            : 'この役割は削除できません' }}
+                        {{
+                            roleBeingDeleted?.can_delete
+                                ? '役割を削除しますか？'
+                                : 'この役割は削除できません'
+                        }}
                     </h2>
                     <p
                         v-if="roleBeingDeleted?.can_delete"
@@ -524,23 +580,37 @@ const deleteRole = () => {
                         </p>
                         <ul class="list-disc pl-5">
                             <li v-if="roleBeingDeleted?.assignment_count > 0">
-                                清掃割当 {{ roleBeingDeleted.assignment_count }}件
+                                清掃割当
+                                {{ roleBeingDeleted.assignment_count }}件
                             </li>
-                            <li v-if="roleBeingDeleted?.available_member_count > 0">
-                                担当可能メンバー {{ roleBeingDeleted.available_member_count }}名
+                            <li
+                                v-if="
+                                    roleBeingDeleted?.available_member_count > 0
+                                "
+                            >
+                                担当可能メンバー
+                                {{ roleBeingDeleted.available_member_count }}名
                             </li>
                         </ul>
-                        <p>使用を終了する場合は、編集から状態を「無効」に変更してください。</p>
+                        <p>
+                            使用を終了する場合は、編集から状態を「無効」に変更してください。
+                        </p>
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+                <div
+                    class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4"
+                >
                     <SecondaryButton
                         type="button"
                         :disabled="deleteForm.processing"
                         @click="requestDeleteModalClose"
                     >
-                        {{ roleBeingDeleted?.can_delete ? 'キャンセル' : '閉じる' }}
+                        {{
+                            roleBeingDeleted?.can_delete
+                                ? 'キャンセル'
+                                : '閉じる'
+                        }}
                     </SecondaryButton>
                     <DangerButton
                         v-if="roleBeingDeleted?.can_delete"

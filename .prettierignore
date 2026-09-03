@@ -1,0 +1,14 @@
+# Build output / vendored code
+/public/build
+/public/hot
+/bootstrap/ssr
+/storage
+/vendor
+/node_modules
+
+# Lockfiles and generated files
+composer.lock
+package-lock.json
+
+# Laravel/Blade — left to their own conventions
+resources/views/**/*.blade.php

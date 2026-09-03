@@ -19,18 +19,18 @@ class CleaningRoleStoreTest extends TestCase
         $this->assertDatabaseCount('cleaning_roles', 0);
     }
 
-    public function test_unverified_users_cannot_store_cleaning_roles(): void
+    public function test_users_can_store_cleaning_roles_without_a_verified_email(): void
     {
         $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)
             ->post(route('cleaning-items.store'), $this->validPayload())
-            ->assertRedirect(route('verification.notice'));
+            ->assertRedirect(route('cleaning-items.index'));
 
-        $this->assertDatabaseCount('cleaning_roles', 0);
+        $this->assertDatabaseCount('cleaning_roles', 1);
     }
 
-    public function test_verified_users_can_store_a_cleaning_role(): void
+    public function test_authenticated_users_can_store_a_cleaning_role(): void
     {
         $user = User::factory()->create();
 
