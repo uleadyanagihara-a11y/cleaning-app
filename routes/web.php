@@ -54,6 +54,8 @@ Route::middleware('auth')->group(function () {
         ->name('accounts.index');
     Route::post('/accounts', [AccountController::class, 'store'])
         ->name('accounts.store');
+    Route::delete('/accounts/{account}', [AccountController::class, 'destroy'])
+        ->name('accounts.destroy');
 });
 
 Route::middleware('auth')->group(function () {
