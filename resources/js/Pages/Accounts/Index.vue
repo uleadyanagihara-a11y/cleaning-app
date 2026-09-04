@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import DangerButton from '@/Components/DangerButton.vue';
 import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -19,6 +20,7 @@ const page = usePage();
 const search = ref(props.filters.search ?? '');
 const hasFilters = computed(() => search.value.trim() !== '');
 const successMessage = computed(() => page.flash.success ?? '');
+const errorMessage = computed(() => page.flash.error ?? '');
 
 const showAccountModal = ref(false);
 const accountForm = useForm(
@@ -57,6 +59,47 @@ const submitAccountForm = () => {
     accountForm.post(route('accounts.store'), {
         preserveScroll: true,
         onSuccess: closeAccountModal,
+    });
+};
+
+/**
+ * @typedef {{ id: number, name: string, email: string, is_current: boolean }} Account
+ */
+
+const showDeleteModal = ref(false);
+const accountBeingDeleted = ref(/** @type {Account|null} */ (null));
+const deleteForm = useForm({});
+
+/**
+ * @param {Account} account
+ */
+const openDeleteModal = (account) => {
+    accountBeingDeleted.value = account;
+    deleteForm.clearErrors();
+    showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    accountBeingDeleted.value = null;
+    deleteForm.reset();
+    deleteForm.clearErrors();
+};
+
+const requestDeleteModalClose = () => {
+    if (!deleteForm.processing) {
+        closeDeleteModal();
+    }
+};
+
+const deleteAccount = () => {
+    if (!accountBeingDeleted.value) {
+        return;
+    }
+
+    deleteForm.delete(route('accounts.destroy', accountBeingDeleted.value.id), {
+        preserveScroll: true,
+        onSuccess: closeDeleteModal,
     });
 };
 
@@ -148,6 +191,13 @@ const paginationLabel = (label) => {
                     class="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
                 >
                     {{ successMessage }}
+                </div>
+                <div
+                    v-if="errorMessage"
+                    role="alert"
+                    class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
+                >
+                    {{ errorMessage }}
                 </div>
                 <div class="grid gap-3 sm:gap-4">
                     <div class="rounded-lg bg-white p-4 shadow-sm">
@@ -251,6 +301,12 @@ const paginationLabel = (label) => {
                                         >
                                             登録日
                                         </th>
+                                        <th
+                                            scope="col"
+                                            class="w-24 px-6 py-3 text-right text-xs font-semibold tracking-wider text-gray-500 uppercase"
+                                        >
+                                            操作
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody
@@ -290,6 +346,24 @@ const paginationLabel = (label) => {
                                             class="px-6 py-4 text-sm whitespace-nowrap text-gray-600"
                                         >
                                             {{ formatDate(account.created_at) }}
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 text-right text-sm font-medium whitespace-nowrap"
+                                        >
+                                            <button
+                                                v-if="!account.is_current"
+                                                type="button"
+                                                class="text-red-600 transition hover:text-red-900 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
+                                                :aria-label="`${account.name}を削除`"
+                                                @click="
+                                                    openDeleteModal(account)
+                                                "
+                                            >
+                                                削除
+                                            </button>
+                                            <span v-else class="text-gray-300">
+                                                —
+                                            </span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -341,6 +415,18 @@ const paginationLabel = (label) => {
                                         </dd>
                                     </div>
                                 </dl>
+                                <div
+                                    v-if="!account.is_current"
+                                    class="mt-4 flex justify-end border-t border-gray-200 pt-3 text-sm font-medium"
+                                >
+                                    <button
+                                        type="button"
+                                        class="text-red-600 hover:text-red-900 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
+                                        @click="openDeleteModal(account)"
+                                    >
+                                        削除
+                                    </button>
+                                </div>
                             </article>
                         </div>
 
@@ -511,6 +597,52 @@ const paginationLabel = (label) => {
                     >
                         {{ accountForm.processing ? '登録中…' : '登録する' }}
                     </PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+
+        <Modal
+            :show="showDeleteModal"
+            :closeable="!deleteForm.processing"
+            max-width="lg"
+            aria-labelledby="delete-account-title"
+            @close="requestDeleteModalClose"
+        >
+            <form @submit.prevent="deleteAccount">
+                <div class="px-6 py-5">
+                    <h2
+                        id="delete-account-title"
+                        class="text-lg font-semibold text-gray-900"
+                    >
+                        アカウントを削除しますか？
+                    </h2>
+                    <p class="mt-3 text-sm leading-6 text-gray-600">
+                        <span class="font-semibold text-gray-900">
+                            {{ accountBeingDeleted?.name }}
+                        </span>
+                        （{{
+                            accountBeingDeleted?.email
+                        }}）のアカウントを削除します。このアカウントではログインできなくなり、この操作は元に戻せません。
+                    </p>
+                </div>
+
+                <div
+                    class="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4"
+                >
+                    <SecondaryButton
+                        type="button"
+                        :disabled="deleteForm.processing"
+                        @click="requestDeleteModalClose"
+                    >
+                        キャンセル
+                    </SecondaryButton>
+                    <DangerButton
+                        type="submit"
+                        :disabled="deleteForm.processing"
+                        :class="{ 'opacity-25': deleteForm.processing }"
+                    >
+                        {{ deleteForm.processing ? '削除中…' : '削除する' }}
+                    </DangerButton>
                 </div>
             </form>
         </Modal>

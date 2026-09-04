@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -65,6 +66,32 @@ class AccountController extends Controller
         ]);
 
         Inertia::flash('success', 'アカウントを登録しました。');
+
+        return to_route('accounts.index');
+    }
+
+    /**
+     * Remove the specified account.
+     */
+    public function destroy(
+        Request $request,
+        User $account,
+    ): RedirectResponse {
+        if ($account->is($request->user())) {
+            Inertia::flash('error', 'ログイン中の自分のアカウントは削除できません。');
+
+            return to_route('accounts.index');
+        }
+
+        DB::transaction(function () use ($account): void {
+            User::query()
+                ->whereKey($account->getKey())
+                ->lockForUpdate()
+                ->firstOrFail()
+                ->delete();
+        });
+
+        Inertia::flash('success', 'アカウントを削除しました。');
 
         return to_route('accounts.index');
     }
